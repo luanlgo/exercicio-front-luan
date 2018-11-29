@@ -17,25 +17,70 @@ class App extends Component {
 
   Add = evt => {
     evt.preventDefault();
+    
+    let produtoData = {
+      "nome": this.state.nome
+    }
+    let header = new Headers({
+      "Content-Type": "application/x-www-form-urlencoded; charset=UTF-8",
+      'Accept': 'application/json',
+    });
+
+    const options = {
+      method: 'POST',
+      header: header,
+      crossDomain: true,
+      body: JSON.stringify(produtoData),
+    }
+
+    fetch("https://localhost:44328/api/Produtos", options)
+    .then(response => {
+      console.log(response);
+    }).catch(error => {
+      console.log(error);
+    });
+    
+  }
+
+  Update = evt => {
+    evt.preventDefault();
 
     let produtoData = {
       "nome": this.state.nome
     }
-    let header = {
-      "Access-Control-Allow-Origin": "*",
+    let header = new Headers({
       "Content-Type": "application/x-www-form-urlencoded; charset=UTF-8"
+    });
+
+    const options = {
+      method: 'PUT',
+      header: header,
+      body: JSON.stringify(produtoData),
     }
 
-    fetch("https://localhost:44328/api/Produtos", {
-      method: "POST",
-      mode: 'cors',
-      body: JSON.stringify(produtoData),
-      headers: header
-    }).then(response => {
-      switch(response.status) {
-        case 400:
-          console.log(response.json);
-      }
+    fetch("https://localhost:44328/api/Produtos/" + this.state.id, options)
+    .then(response => {
+      console.log(response);
+    }).catch(error => {
+      console.log(error);
+    });
+  }
+
+  Delete = evt => {
+    evt.preventDefault();
+
+    let header = new Headers({
+      "Content-Type": "application/x-www-form-urlencoded; charset=UTF-8"
+    });
+
+    const options = {
+      method: 'DELETE',
+      header: header,
+    }
+
+    fetch("https://localhost:44328/api/Produtos/" + this.state.id, options)
+    .then(response => {
+      console.log(response.status);
     }).catch(error => {
       console.log(error);
     });
@@ -53,7 +98,12 @@ class App extends Component {
             <input type="text" name="nome" value={this.props.nome} onChange={this.updateStatus}></input>
           </div>
           <button onClick={this.Add}>Cadastrar</button>
+          <button onClick={this.Update}>Editar</button>
+          <button onClick={this.Delete}>Delete</button>
         </form>
+        <div className="status">
+          {this.props.lastStatus}
+        </div>
       </div>
     );
   }
