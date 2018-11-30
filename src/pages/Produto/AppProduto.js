@@ -18,24 +18,24 @@ class App extends Component {
   Add = evt => {
     evt.preventDefault();
     
-    let produtoData = {
-      "nome": this.state.nome
-    }
     let header = new Headers({
-      "Content-Type": "application/x-www-form-urlencoded; charset=UTF-8",
-      'Accept': 'application/json',
+      "Content-Type": "application/json",
+      "Accept": "application/json, text/plain, */*"
     });
 
+    const produtoData = JSON.stringify({"nome": this.state.nome});
+    
     const options = {
       method: 'POST',
-      header: header,
       crossDomain: true,
-      body: JSON.stringify(produtoData),
+      header: header,
+      body: produtoData
     }
-
+    console.log(options);
+    
     fetch("https://localhost:44328/api/Produtos", options)
     .then(response => {
-      console.log(response);
+      console.log(response.body);
     }).catch(error => {
       console.log(error);
     });
@@ -49,6 +49,7 @@ class App extends Component {
       "nome": this.state.nome
     }
     let header = new Headers({
+      "AllowSpecificOrigin": "http://localhost:3000/",
       "Content-Type": "application/x-www-form-urlencoded; charset=UTF-8"
     });
 
@@ -90,6 +91,7 @@ class App extends Component {
     return (
       <div className="App">
         <form>
+          <label>CAECDA51-D960-40CD-1B32-08D656331201</label>
           <div className="container">
             <label>Identificador: </label>
             <input type="text" name="id" value={this.props.id} onChange={this.updateStatus}></input>
