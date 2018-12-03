@@ -7,6 +7,7 @@ class App extends Component {
     this.state = {
       id: "",
       nome: "",
+      lastStatus: "",
     }
   };
 
@@ -18,26 +19,23 @@ class App extends Component {
   Add = evt => {
     evt.preventDefault();
     
-    let header = new Headers({
-      "Content-Type": "application/json",
-      "Accept": "application/json, text/plain, */*"
-    });
-
-    const produtoData = JSON.stringify({"nome": this.state.nome});
-    
     const options = {
       method: 'POST',
       crossDomain: true,
-      header: header,
-      body: produtoData
+      headers: {
+        'Accept': 'application/json',
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        "nome": this.state.nome
+      })
     }
-    console.log(options);
-    
+
     fetch("https://localhost:44328/api/Produtos", options)
     .then(response => {
-      console.log(response.body);
-    }).catch(error => {
-      console.log(error);
+      this.setState({
+        lastStatus: response.status
+      });
     });
     
   }
@@ -45,45 +43,43 @@ class App extends Component {
   Update = evt => {
     evt.preventDefault();
 
-    let produtoData = {
-      "nome": this.state.nome
-    }
-    let header = new Headers({
-      "AllowSpecificOrigin": "http://localhost:3000/",
-      "Content-Type": "application/x-www-form-urlencoded; charset=UTF-8"
-    });
-
     const options = {
       method: 'PUT',
-      header: header,
-      body: JSON.stringify(produtoData),
+      crossDomain: true,
+      headers: {
+        'Accept': 'application/json',
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        "nome": this.state.nome
+      })
     }
 
     fetch("https://localhost:44328/api/Produtos/" + this.state.id, options)
     .then(response => {
-      console.log(response);
-    }).catch(error => {
-      console.log(error);
+      this.setState({
+        lastStatus: response.status
+      });
     });
   }
 
   Delete = evt => {
     evt.preventDefault();
 
-    let header = new Headers({
-      "Content-Type": "application/x-www-form-urlencoded; charset=UTF-8"
-    });
-
     const options = {
       method: 'DELETE',
-      header: header,
+      crossDomain: true,
+      headers: {
+        'Accept': 'application/json',
+        'Content-Type': 'application/json',
+      }
     }
 
     fetch("https://localhost:44328/api/Produtos/" + this.state.id, options)
     .then(response => {
-      console.log(response.status);
-    }).catch(error => {
-      console.log(error);
+      this.setState({
+        lastStatus: response.status
+      });
     });
   }
 
@@ -91,7 +87,6 @@ class App extends Component {
     return (
       <div className="App">
         <form>
-          <label>CAECDA51-D960-40CD-1B32-08D656331201</label>
           <div className="container">
             <label>Identificador: </label>
             <input type="text" name="id" value={this.props.id} onChange={this.updateStatus}></input>
@@ -104,7 +99,7 @@ class App extends Component {
           <button onClick={this.Delete}>Delete</button>
         </form>
         <div className="status">
-          {this.props.lastStatus}
+          {this.state.lastStatus}
         </div>
       </div>
     );
