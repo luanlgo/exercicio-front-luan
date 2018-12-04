@@ -7,7 +7,8 @@ class App extends Component {
     this.state = {
       id: "",
       nome: "",
-      lastStatus: "",
+      lastStatus: null,
+      produtos: []
     }
   };
 
@@ -37,7 +38,6 @@ class App extends Component {
         lastStatus: response.status
       });
     });
-    
   }
 
   Update = evt => {
@@ -83,6 +83,47 @@ class App extends Component {
     });
   }
 
+  Delete = id => {
+    const options = {
+      method: 'DELETE',
+      crossDomain: true,
+      headers: {
+        'Accept': 'application/json',
+        'Content-Type': 'application/json',
+      }
+    }
+
+    fetch("https://localhost:44328/api/Produtos/" + id, options)
+    .then(response => {
+      this.setState({
+        lastStatus: response.status
+      });
+    });
+  }
+
+  Listar = evt => {
+    evt.preventDefault();
+
+    const options = {
+      method: 'GET',
+      crossDomain: true,
+      headers: {
+        'Accept': 'application/json',
+        'Content-Type': 'application/json',
+      }
+    }
+
+    fetch("https://localhost:44328/api/Produtos/" + this.state.id, options)
+    .then(response => response.json())
+    .then(produtos => {
+      produtos.forEach(element => {
+        this.setState({
+          produtos: [...this.state.produtos, { id: element.id, nome: element.nome }]
+        });
+      });
+    });
+  }
+
   render() {
     return (
       <div className="App">
@@ -97,9 +138,19 @@ class App extends Component {
           <button onClick={this.Add}>Cadastrar</button>
           <button onClick={this.Update}>Editar</button>
           <button onClick={this.Delete}>Delete</button>
+          <button onClick={this.Listar}>Listar</button>
         </form>
         <div className="status">
-          {this.state.lastStatus}
+          <label>Status: {this.state.lastStatus}</label>
+        </div>
+        <div className="ListaProdutos">
+          <ul>
+            {
+              this.state.produtos.map((produto, interador) => 
+                <li key={interador}>{produto.id} - {produto.nome}</li>
+              )
+            }
+          </ul>
         </div>
       </div>
     );
